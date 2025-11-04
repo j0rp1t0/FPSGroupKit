@@ -43,7 +43,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: d145ef7ec5c612648aba1716a7f53ac9,
     type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e8ed11207c86d614cbf486a93a782359, type: 3}
   m_Resource: {fileID: 8300000, guid: e8ed11207c86d614cbf486a93a782359, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -381,9 +381,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 5
   pointValue: 0
-  DestroyedEffect: {fileID: 0}
+  DestroyedEffect: {fileID: 198321120434662062, guid: 5656e7ea1f1a75d4c895547ec2b824b3,
+    type: 3}
   HitPlayer: {fileID: 5048646943822293922}
   IdleSource: {fileID: 2905589819194084849}
+  ammoDropPrefab: {fileID: 8343662263824511852, guid: c62b5f43f8af6464ba729eefafe0c563,
+    type: 3}
+  dropChance: 0.5
 --- !u!1001 &3328592225638519067
 PrefabInstance:
   m_ObjectHideFlags: 0

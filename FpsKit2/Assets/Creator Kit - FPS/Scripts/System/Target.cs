@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 public class Target : MonoBehaviour
 {
@@ -14,7 +12,12 @@ public class Target : MonoBehaviour
     [Header("Audio")]
     public RandomPlayer HitPlayer;
     public AudioSource IdleSource;
-    
+
+    [Header("Drops")]
+    public GameObject ammoDropPrefab;  
+    [Range(0f, 1f)]
+    public float dropChance = 0.5f;    
+
     public bool Destroyed => m_Destroyed;
 
     bool m_Destroyed = false;
@@ -27,27 +30,27 @@ public class Target : MonoBehaviour
 
     void Start()
     {
-        if(DestroyedEffect)
+        if (DestroyedEffect)
             PoolSystem.Instance.InitPool(DestroyedEffect, 16);
-        
+
         m_CurrentHealth = health;
-        if(IdleSource != null)
+        if (IdleSource != null)
             IdleSource.time = Random.Range(0.0f, IdleSource.clip.length);
     }
 
     public void Got(float damage)
     {
         m_CurrentHealth -= damage;
-        
-        if(HitPlayer != null)
+
+        if (HitPlayer != null)
             HitPlayer.PlayRandom();
-        
-        if(m_CurrentHealth > 0)
+
+        if (m_CurrentHealth > 0)
             return;
 
         Vector3 position = transform.position;
-        
-        //the audiosource of the target will get destroyed, so we need to grab a world one and play the clip through it
+
+        // the audiosource of the target will get destroyed, so we need to grab a world one and play the clip through it
         if (HitPlayer != null)
         {
             var source = WorldAudioPool.GetWorldSFXSource();
@@ -64,10 +67,15 @@ public class Target : MonoBehaviour
             effect.transform.position = position;
         }
 
+        // 🟢 NEW CODE: Spawn Ammo Drop
+        if (ammoDropPrefab != null && Random.value <= dropChance)
+        {
+            Instantiate(ammoDropPrefab, position + Vector3.up * 0.5f, Quaternion.identity);
+        }
+
         m_Destroyed = true;
-        
         gameObject.SetActive(false);
-       
+
         GameSystem.Instance.TargetDestroyed(pointValue);
     }
 }
