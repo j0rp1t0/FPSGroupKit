@@ -67,7 +67,6 @@ public class Target : MonoBehaviour
             effect.transform.position = position;
         }
 
-        // 🟢 NEW CODE: Spawn Ammo Drop
         if (ammoDropPrefab != null && Random.value <= dropChance)
         {
             Instantiate(ammoDropPrefab, position + Vector3.up * 0.5f, Quaternion.identity);
