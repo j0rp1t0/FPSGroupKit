@@ -34,6 +34,7 @@ public class Controller : MonoBehaviour
     public float PlayerSpeed = 5.0f;
     public float RunningSpeed = 7.0f;
     public float JumpSpeed = 5.0f;
+    public float CoyoteTimeWindow = 0.2f;
 
     [Header("Audio")]
     public RandomPlayer FootstepPlayer;
@@ -57,7 +58,10 @@ public class Controller : MonoBehaviour
     bool m_Grounded;
     float m_GroundedTimer;
     float m_SpeedAtJump = 0.0f;
+    //Update V2
     bool m_HasDoubleJumped = false;
+    //Update V3
+    float m_TimeSinceGrounded = 0.0f;
 
     List<Weapon> m_Weapons = new List<Weapon>();
     Dictionary<int, int> m_AmmoInventory = new Dictionary<int, int>();
@@ -135,19 +139,39 @@ public class Controller : MonoBehaviour
             m_Grounded = true;
             m_HasDoubleJumped = false;
         }
-
+        // Update V3
+        if (m_Grounded)
+        {
+            m_TimeSinceGrounded = 0.0f;
+        }
+        else
+        {
+            m_TimeSinceGrounded += Time.deltaTime;
+        }
         Speed = 0;
         Vector3 move = Vector3.zero;
         if (!m_IsPaused && !LockControl)
         {
-            // Jump (we do it first as 
-            if (m_Grounded && Input.GetButtonDown("Jump"))
+            // Updated V3
+            if ((m_Grounded || m_TimeSinceGrounded < CoyoteTimeWindow) && Input.GetButtonDown("Jump"))
             {
                 m_VerticalSpeed = JumpSpeed;
-                m_Grounded = false;
-                loosedGrounding = true;
-                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f,1.1f);
+
+                // If we used coyote time (not grounded), consume it
+                if (!m_Grounded)
+                {
+                    m_TimeSinceGrounded = 999f; // Prevent further coyote jumps
+                }
+                else
+                {
+                    // Normal jump from ground
+                    m_Grounded = false;
+                    loosedGrounding = true;
+                }
+
+                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f, 1.1f);
             }
+            //Update V2
             else if (!m_Grounded && !m_HasDoubleJumped && Input.GetButtonDown("Jump"))
             {
                 m_VerticalSpeed = JumpSpeed; 
