@@ -57,6 +57,7 @@ public class Controller : MonoBehaviour
     bool m_Grounded;
     float m_GroundedTimer;
     float m_SpeedAtJump = 0.0f;
+    bool m_HasDoubleJumped = false;
 
     List<Weapon> m_Weapons = new List<Weapon>();
     Dictionary<int, int> m_AmmoInventory = new Dictionary<int, int>();
@@ -132,6 +133,7 @@ public class Controller : MonoBehaviour
         {
             m_GroundedTimer = 0.0f;
             m_Grounded = true;
+            m_HasDoubleJumped = false;
         }
 
         Speed = 0;
@@ -146,7 +148,12 @@ public class Controller : MonoBehaviour
                 loosedGrounding = true;
                 FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f,1.1f);
             }
-            
+            else if (!m_Grounded && !m_HasDoubleJumped && Input.GetButtonDown("Jump"))
+            {
+                m_VerticalSpeed = JumpSpeed; 
+                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f, 1.1f);
+                m_HasDoubleJumped = true; 
+            }
             bool running = m_Weapons[m_CurrentWeapon].CurrentState == Weapon.WeaponState.Idle && Input.GetButton("Run");
             float actualSpeed = running ? RunningSpeed : PlayerSpeed;
 
